@@ -1,0 +1,25 @@
+﻿@model BookFormViewModel
+
+@{
+    ViewData["Title"] = "Add";
+}
+
+<h1>Add</h1>
+
+<h4>Book</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Add" method="post" enctype="multipart/form-data" class="row g-3">
+            <partial name="BooksForm" />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+

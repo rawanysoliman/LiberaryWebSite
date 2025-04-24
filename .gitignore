@@ -1,0 +1,32 @@
+# Ignore build outputs
+bin/
+obj/
+
+# Ignore Visual Studio files
+.vs/
+*.user
+*.suo
+
+# Ignore logs and other unnecessary stuff
+*.log
+*.dbmdl
+
+# Ignore published output
+publish/
+
+# Optional: ignore secrets and config (if not using secrets manager)
+appsettings.Development.json
+appsettings.json
+
+# Ignore Visual Studio folders
+.vs/
+*.user
+*.suo
+
+# Ignore build folders
+bin/
+obj/
+
+# Ignore sensitive configs
+appsettings.Development.json
+appsettings.json
