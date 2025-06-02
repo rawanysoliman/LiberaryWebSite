@@ -42,10 +42,12 @@ namespace LibraryManagementSystem.Repositories
             dbSet.Remove(entity);
         }
 
+        //return all entities that match the predicate
         public async Task<IEnumerable<T>> FindByType(Expression<Func<T, bool>> predicate)
         {
             return await dbSet.Where(predicate).ToListAsync();
         }
+
         //async Task<T> GetAllWithAuthors()
         //{
         //    return await dbSet.Include(b => b.).ToListAsync();
@@ -55,6 +57,25 @@ namespace LibraryManagementSystem.Repositories
         //{
 
         //}
+
+       //a method to include related entities
+       public async Task<IEnumerable<T>> GetAllIncluding(params Expression<Func<T, object>>[] includes)
+       {
+        
+          IQueryable<T> query = dbSet;
+          if (includes != null)
+          {
+              foreach (var include in includes)
+              {
+                  if (include != null)
+                  {
+                      query = query.Include(include);
+                  }
+              }
+          }
+          return await query.ToListAsync();   
+      }
+
 
        public async Task<bool> IsUnique(Expression<Func<T, bool>> predicate)
         {

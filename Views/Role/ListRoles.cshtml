@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "List of Roles";
+}
+
+<h2>Roles</h2>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model)
+        {
+            @foreach (var user in await UserManager.GetUsersInRoleAsync(role.Name))
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@role.Name</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<a href="@Url.Action("CreateRole", "Role")" class="btn btn-primary">Create New Role</a>
+<a href="@Url.Action("AssignRole", "Role")" class="btn btn-secondary">Assign Role to User</a>
+

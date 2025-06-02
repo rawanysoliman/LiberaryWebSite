@@ -1,0 +1,26 @@
+﻿@model AssignRoleViewModel
+@{
+    ViewData["Title"] = "Assign Role to User";
+}
+
+<h2>Assign Role</h2>
+
+<form asp-action="AssignRole" method="post">
+    <div class="form-group">
+        <label>Username:</label>
+        <select asp-for="Username" asp-items="Model.Users" class="form-select-lg  my-3  p-2"></select>
+        <span asp-validation-for="Username" class="text-danger"></span>  
+    </div>
+    <div class="form-group">
+        <label>Role Name:</label>
+        <select asp-for="Role" asp-items="Model.Roles " class="form-select-lg  my-3  p-2"></select>
+        <span asp-validation-for="Role" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Assign</button>
+</form>
+<a asp-action="ListRoles">Back to List</a>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success mt-3">@ViewBag.Message</div>
+}

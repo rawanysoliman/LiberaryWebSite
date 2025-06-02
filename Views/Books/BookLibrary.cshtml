@@ -1,0 +1,93 @@
+﻿@model LibraryManagementSystem.ViewModels.BookLibraryViewModel
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Book Library";
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+
+<div class="container mt-4">
+    <h2 class="text-white mb-4">Digital Book Library</h2>
+
+    <!-- Filter Section -->
+    <div class="filter-section mb-4">
+        <div class="filter-title">
+            <span class="me-2">🔎</span>Filter Books
+        </div>
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-2">
+                <label class="form-label">Availability</label>
+                <select name="FilterAvailable" class="form-select">
+                    <option value="">All</option>
+                    <option value="true" selected="@(Model.FilterAvailable == true)">Available</option>
+                    <option value="false" selected="@(Model.FilterAvailable == false)">Borrowed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Borrowed From</label>
+                <input type="date" name="FilterBorrowedFrom" class="form-control" value="@(Model.FilterBorrowedFrom?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Borrowed To</label>
+                <input type="date" name="FilterBorrowedTo" class="form-control" value="@(Model.FilterBorrowedTo?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Returned From</label>
+                <input type="date" name="FilterReturnedFrom" class="form-control" value="@(Model.FilterReturnedFrom?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Returned To</label>
+                <input type="date" name="FilterReturnedTo" class="form-control" value="@(Model.FilterReturnedTo?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-md-2 d-grid gap-2">
+                <button type="submit" class="btn btn-primary mb-1">Apply Filters</button>
+                <a asp-action="BookLibrary" class="btn btn-secondary">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Books Grid -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var book in Model.Books)
+        {
+            <div class="col">
+                <div class="card h-100"" style="width: 16rem;">
+                    @if (!string.IsNullOrEmpty(book.ImagePath))
+                    {
+                        <img src="@book.ImagePath" class="card-img-top img-fluid" alt="@book.Title" style="height: 400px; object-fit: cover;">
+                    }
+                    <div class="card-body p-2">
+                        <h6 class="card-title mb-2">@book.Title</h6>
+                        <p class="card-text small mb-2">
+                            <strong>Author:</strong> @book.Author?.Name<br />
+                            <strong>Category:</strong> @book.Category?.Name<br />
+                            <strong>Status:</strong>
+                            <span class="badge @(book.IsAvailable ? "bg-success" : "bg-danger")">
+                                @(book.IsAvailable ? "Available" : "Borrowed")
+                            </span>
+                        </p>
+                        @if (book.IsAvailable)
+                        {
+                            <a asp-action="BorrowBook" asp-route-id="@book.Id" class="btn btn-sm btn-primary">Borrow</a>
+                        }
+                        else
+                        {
+                            <p class="card-text small mb-2">
+                                <strong  class="text-danger">Borrowed By:</strong> @book.BorrowedByUser?.UserName
+                            </p>
+                            @if (book.BorrowedByUserId == currentUserId)
+                            {
+                                <form asp-action="ReturnBook" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@book.Id" />
+                                    <button type="submit" class="btn btn-sm btn-warning">Return</button>
+                                </form>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

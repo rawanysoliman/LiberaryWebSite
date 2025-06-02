@@ -1,0 +1,14 @@
+﻿@model Author
+
+<form asp-action="Edit" method="post">
+
+	    <partial name="AuthorsForm" />
+	<div class="form-group">
+		<input type="submit" value="Update" class="btn btn-primary" />
+	</div>
+</form>
+
+
+@{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}

@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Create New Role";
+}
+
+<h2>Create Role</h2>
+
+<form asp-action="CreateRole" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label>Role Name:</label>
+        <input name="roleName" class="form-control w-25 mb-2"  required />
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+	<a asp-action="ListRoles">Back to List</a>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success mt-3">@ViewBag.Message</div>
+}

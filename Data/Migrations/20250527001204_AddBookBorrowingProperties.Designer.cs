@@ -4,6 +4,7 @@ using LibraryManagementSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LibraryManagementSystem.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250527001204_AddBookBorrowingProperties")]
+    partial class AddBookBorrowingProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,9 +138,6 @@ namespace LibraryManagementSystem.Data.Migrations
                     b.Property<string>("BorrowedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BorrowedByUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime?>("BorrowedDate")
                         .HasColumnType("datetime2");
 
@@ -167,8 +167,6 @@ namespace LibraryManagementSystem.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
-
-                    b.HasIndex("BorrowedByUserId");
 
                     b.HasIndex("CategoryId");
 
@@ -336,10 +334,6 @@ namespace LibraryManagementSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LibraryManagementSystem.Models.ApplicationUser", "BorrowedByUser")
-                        .WithMany("BorrowedBooks")
-                        .HasForeignKey("BorrowedByUserId");
-
                     b.HasOne("LibraryManagementSystem.Models.Category", "Category")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
@@ -347,8 +341,6 @@ namespace LibraryManagementSystem.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
-
-                    b.Navigation("BorrowedByUser");
 
                     b.Navigation("Category");
                 });
@@ -402,11 +394,6 @@ namespace LibraryManagementSystem.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("LibraryManagementSystem.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("BorrowedBooks");
                 });
 
             modelBuilder.Entity("LibraryManagementSystem.Models.Author", b =>

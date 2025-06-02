@@ -12,6 +12,7 @@ namespace LibraryManagementSystem.UnitOfWorkPattern
 
         private AppDbContext db;
 
+        //constructor
         public UnitOfWork(AppDbContext _db)
         {
             db = _db;

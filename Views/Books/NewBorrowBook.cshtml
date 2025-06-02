@@ -1,0 +1,116 @@
+@model IEnumerable<LibraryManagementSystem.Models.Book>
+@{
+    ViewData["Title"] = "Borrow Book";
+}
+
+<div class="container mt-4">
+    <h3>Borrow Book</h3>
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="mb-3">
+        <label for="bookSelect" class="form-label">Select a Book:</label>
+        <select id="bookSelect" class="form-select" onchange="updateBookDetails()">
+            <option value="">-- Select a Book --</option>
+            @foreach (var book in Model)
+            {
+                <option value="@book.Id"
+                        data-title="@book.Title"
+                        data-author="@book.Author?.Name"
+                        data-category="@book.Category?.Name"
+                        data-published="@book.PublishedDate.ToShortDateString()"
+                        data-description="@book.Description"
+                        data-image="@book.ImagePath"
+                        data-available="@book.IsAvailable.ToString().ToLower()">
+                    @book.Title
+                </option>
+            }
+        </select>
+    </div>
+
+    <div id="bookDetails" style="display:none;" class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <img id="bookImage" src="" class="img-fluid rounded" alt="" style="max-height:200px;">
+                </div>
+                <div class="col">
+                    <h4 id="bookTitle"></h4>
+                    <p><strong>Author:</strong> <span id="bookAuthor"></span></p>
+                    <p><strong>Category:</strong> <span id="bookCategory"></span></p>
+                    <p><strong>Published Date:</strong> <span id="bookPublished"></span></p>
+                    <p id="bookDescription"></p>
+                    <div id="availabilityStatus" class="alert"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="borrowForm" asp-action="NewBorrowBook" method="post" style="display:none;" class="mt-4">
+        <input type="hidden" id="bookId" name="id" />
+        <div class="alert alert-info">
+            <p>Are you sure you want to borrow this book?</p>
+            <p>The book will be marked as borrowed and the borrow date will be set to <span id="borrowDate"></span></p>
+        </div>
+        <button type="submit" id="borrowButton" class="btn btn-primary">Confirm Borrow</button>
+        <a asp-action="BookLibrary" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function updateBookDetails() {
+            var select = document.getElementById('bookSelect');
+            var selected = select.options[select.selectedIndex];
+
+            if (!selected.value) {
+                document.getElementById('bookDetails').style.display = 'none';
+                document.getElementById('borrowForm').style.display = 'none';
+                return;
+            }
+
+            // Update book details
+            document.getElementById('bookTitle').innerText = selected.getAttribute('data-title');
+            document.getElementById('bookAuthor').innerText = selected.getAttribute('data-author');
+            document.getElementById('bookCategory').innerText = selected.getAttribute('data-category');
+            document.getElementById('bookPublished').innerText = selected.getAttribute('data-published');
+            document.getElementById('bookDescription').innerText = selected.getAttribute('data-description');
+            
+            var imagePath = selected.getAttribute('data-image');
+            var bookImage = document.getElementById('bookImage');
+            if (imagePath) {
+                bookImage.src = imagePath;
+                bookImage.style.display = '';
+            } else {
+                bookImage.style.display = 'none';
+            }
+            bookImage.alt = selected.getAttribute('data-title');
+
+            // Update availability status
+            var available = selected.getAttribute('data-available') === 'true';
+            var statusDiv = document.getElementById('availabilityStatus');
+            if (available) {
+                statusDiv.className = 'alert alert-success';
+                statusDiv.innerText = 'Available';
+                document.getElementById('borrowButton').disabled = false;
+            } else {
+                statusDiv.className = 'alert alert-danger';
+                statusDiv.innerText = 'Checked Out';
+                document.getElementById('borrowButton').disabled = true;
+            }
+
+            // Set book id for form
+            document.getElementById('bookId').value = selected.value;
+            document.getElementById('borrowDate').innerText = new Date().toLocaleString();
+
+            // Show details and form
+            document.getElementById('bookDetails').style.display = '';
+            document.getElementById('borrowForm').style.display = '';
+        }
+    </script>
+}

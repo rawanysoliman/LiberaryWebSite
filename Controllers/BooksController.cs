@@ -1,34 +1,43 @@
 ﻿using LibraryManagementSystem.Models;
 using LibraryManagementSystem.MyCustomValidation;
-using LibraryManagementSystem.UnitOfWorkPattern;
+using LibraryManagementSystem.Services;
+using LibraryManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;  
+
+
+//a controller for the books
+//methods included:
+//Index,Details,Add,Edit,Delete,DeleteConfirmed
 
 namespace LibraryManagementSystem.Controllers
 {
     public class BooksController : Controller
     {
-        public IUnitOfWork _unitOfWork { get; }
+        private readonly IBookService _bookService;
 
-
-        public BooksController(IUnitOfWork _IUnitOfWork)
+        public BooksController(IBookService bookService)
         {
-            _unitOfWork = _IUnitOfWork;
+            _bookService = bookService;
         }
-
 
         // GET: Books
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var books =await _unitOfWork.Books.GetAll();
+            var books = await _bookService.GetAllBooksWithDetails();
             return View(books);
         }
+
+
+
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var book = await _unitOfWork.Books.GetById(id);
+            var book = await _bookService.GetBookByIdWithDetails(id);
             if (book == null)
             {
                 return NotFound();
@@ -36,12 +45,19 @@ namespace LibraryManagementSystem.Controllers
             return View(book);
         }
 
-        #region HELPER METHODS
-        private async Task GetWithAuthorsAndCategories(BookFormViewModel vm)
+        //get the add form
+        public async Task<IActionResult> Add()
         {
-            vm.Authors = await _unitOfWork.Authors.GetAll();
-            vm.Categories = await _unitOfWork.Categories.GetAll();
+            var vm = await _bookService.GetBookFormViewModel();
+            return View(vm);
         }
+
+        #region HELPER METHODS
+        // private async Task GetWithAuthorsAndCategories(BookFormViewModel vm)
+        // {
+        //     vm.Authors = await _bookService.GetAllAuthors();
+        //     vm.Categories = await _bookService.GetAllCategories();
+        // }
 
         private async Task<string> UploadImage(IFormFile imageFile)
         {
@@ -70,30 +86,16 @@ namespace LibraryManagementSystem.Controllers
         }
         #endregion
 
-        //get the add form
-        public async Task<IActionResult> Add()
-        {
-            //instead of viewbag
-            BookFormViewModel vm = new BookFormViewModel()
-            {
-                Authors = await _unitOfWork.Authors.GetAll(),
-                Categories= await _unitOfWork.Categories.GetAll(),
-                Book=new Book()
-            };
-            return View(vm);
-        }
-
         [MaxImageSizeFilter(5 * 1024 * 1024)]
         [HttpPost]
-        public async Task<IActionResult> Add(BookFormViewModel vm , IFormFile ImageFile)
+        public async Task<IActionResult> Add(BookFormViewModel vm, IFormFile ImageFile)
         {
-            //check for uniqness
-            bool isTitleUnique = await _unitOfWork.Books.IsUnique(b => b.Title == vm.Book.Title);
+            bool isTitleUnique = await _bookService.IsTitleUnique(vm.Book.Title);
             if (!isTitleUnique)
             {
                 ModelState.AddModelError("Book.Title", "Book title must be unique.");
             }
-            //required validn. img when add only
+
             if (!vm.IsEditMode && (vm.ImageFile == null || vm.ImageFile.Length == 0))
             {
                 ModelState.AddModelError(nameof(vm.ImageFile), "Image is required");
@@ -101,88 +103,75 @@ namespace LibraryManagementSystem.Controllers
             
             if (!ModelState.IsValid)
             {
-                await  GetWithAuthorsAndCategories(vm);
+                vm = await _bookService.GetBookFormViewModel();
                 return View(vm);
+
+                // var formVm = await _bookService.GetBookFormViewModel(vm.Book.Id);
+                // vm.Authors = formVm.Authors;
+                // vm.Categories = formVm.Categories;
+                //  return View(vm);
             }
-            //adding img file
-            vm.Book.ImagePath = await UploadImage(vm.ImageFile);
-            await _unitOfWork.Books.Add(vm.Book);
-            await _unitOfWork.CommitChanges();
 
-                return RedirectToAction("Index");
+            vm.Book.ImagePath = await _bookService.UploadBookImage(vm.ImageFile);
+            await _bookService.AddBook(vm.Book);
+
+            return RedirectToAction("Index");
         }
-
-
 
         //get
         public async Task<IActionResult> Edit(int id)
         {
-            var book = await _unitOfWork.Books.GetById(id);
-
-            if (book == null)
+            var vm = await _bookService.GetBookFormViewModel(id);
+            if (vm.Book == null)
             {
                 return NotFound();
             }
-            //instead of viewbag
-            BookFormViewModel vm = new BookFormViewModel()
-            {
-                Book = book,
-                IsEditMode = true 
-            };
-            await GetWithAuthorsAndCategories(vm);
             return View(vm);
         }
 
-
         [MaxImageSizeFilter(5 * 1024 * 1024)]
         [HttpPost]
-
         public async Task<IActionResult> Edit(int id, BookFormViewModel vm, IFormFile? ImageFile)
         {
-            //check for uniqness
-            bool isTitleUnique = await _unitOfWork.Books.IsUnique(b => 
-            b.Title == vm.Book.Title && b.Id != vm.Book.Id);
-
+            bool isTitleUnique = await _bookService.IsTitleUnique(vm.Book.Title, vm.Book.Id);
             if (!isTitleUnique)
             {
                 ModelState.AddModelError("Book.Title", "Book title must be unique.");
             }
+
             if (id != vm.Book.Id) return NotFound();
             vm.IsEditMode = true;
 
             if (!ModelState.IsValid)
             {
-                await GetWithAuthorsAndCategories(vm);
+                vm = await _bookService.GetBookFormViewModel(id);
                 return View(vm);
             }
-
-            var existingBook = await _unitOfWork.Books.GetById(id);
-                if (existingBook == null)
-                    return NotFound();
-
-                // reuse the original tracked entity, just update its properties
-                existingBook.Title = vm.Book.Title;
-                existingBook.AuthorId = vm.Book.AuthorId;
-                existingBook.CategoryId = vm.Book.CategoryId;
-                existingBook.Description = vm.Book.Description;
-                existingBook.PublishedDate = vm.Book.PublishedDate;
+            //if user added new mge file, delete the old one and upload the new one
             if (vm.ImageFile != null && vm.ImageFile.Length > 0)
             {
-                // Delete old img if exists
-                DeleteImage(existingBook.ImagePath);
-                // Save new img
-                existingBook.ImagePath =  await UploadImage(vm.ImageFile);
+                var existingBook = await _bookService.GetBookById(id);
+                if (existingBook != null)
+                {
+                    _bookService.DeleteBookImage(existingBook.ImagePath);
+                }
+                vm.Book.ImagePath = await _bookService.UploadBookImage(vm.ImageFile);
             }
-            //else  keep old img
-            //IUnitOfWork.Books.Update(existingBook); // no need updated manually
-            await _unitOfWork.CommitChanges();
+            else
+            {
+                // Keep the existing image path
+                var existingBook = await _bookService.GetBookById(id);
+                vm.Book.ImagePath = existingBook?.ImagePath;
+            }
 
-                return RedirectToAction(nameof(Index));
+            await _bookService.UpdateBook(vm.Book);
+            return RedirectToAction(nameof(Index));
         }
+
         //get the confirmation page
         public async Task<IActionResult> Delete(int id)
         {
-            var book = await _unitOfWork.Books.GetById(id);
+            var book = await _bookService.GetBookByIdWithDetails(id);
             if (book == null)
             {
                 return NotFound();
@@ -193,20 +182,139 @@ namespace LibraryManagementSystem.Controllers
         //form submission
         [HttpPost]
         [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var book = await _unitOfWork.Books.GetById(id);
-            if (book != null)
-            {
-                _unitOfWork.Books.Remove(book);
-                //delete from root
-                DeleteImage(book.ImagePath); 
-                // Remove from the database
-                await _unitOfWork.CommitChanges();
-                return RedirectToAction("Index");
+            await _bookService.DeleteBook(id);
+            return RedirectToAction("Index");
+        }
 
+
+
+
+
+        //******************************************************************
+        // GET: Books/BookLibrary
+        [Authorize]
+        public async Task<IActionResult> BookLibrary(
+            bool? filterAvailable,
+            DateTime? filterBorrowedFrom,
+            DateTime? filterBorrowedTo,
+            DateTime? filterReturnedFrom,
+            DateTime? filterReturnedTo)
+        {
+            var viewModel = await _bookService.GetBookLibraryViewModel(
+                filterAvailable,
+                filterBorrowedFrom,
+                filterBorrowedTo,
+                filterReturnedFrom,
+                filterReturnedTo);
+            return View(viewModel);
+        }
+
+        // GET: Books/BorrowBook/5
+        [Authorize]
+        public async Task<IActionResult> BorrowBook(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
             }
-            return NotFound();
+
+            var book = await _bookService.GetBookByIdWithDetails(id.Value);
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            if (!book.IsAvailable)
+            {
+                TempData["ErrorMessage"] = "This book is already borrowed.";
+                return RedirectToAction("BookLibrary");
+            }
+
+            return View(book);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BorrowBook(int id)
+        {
+            //get the current user id
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                //if the user is not logged in, redirect to the login page
+                //and show a message
+                TempData["ErrorMessage"] = "You must be logged in to borrow a book.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            //borrow the book
+            var error = await _bookService.BorrowBook(id, userId);
+            if (error != null)
+            {
+                TempData["ErrorMessage"] = error;
+                return RedirectToAction("BookLibrary");
+            }
+            TempData["SuccessMessage"] = "Book borrowed successfully!";
+            return RedirectToAction("BookLibrary");
+        }
+
+        // POST: Books/ReturnBook/5
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReturnBook(int id)
+        {
+            //get the current user id
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+            {
+                TempData["ErrorMessage"] = "You must be logged in to return a book.";
+                return RedirectToAction("BookLibrary");
+            }
+            //return the book
+            var result = await _bookService.ReturnBook(id, userId);
+            if (result != null)
+            {
+                TempData["ErrorMessage"] = result;      
+                return RedirectToAction("BookLibrary");
+            }
+
+            TempData["SuccessMessage"] = "Book returned successfully!";
+            return RedirectToAction("BookLibrary");
+        }
+
+
+
+//******************************************************************
+        // GET: Books/NewBorrowBook
+        public async Task<IActionResult> NewBorrowBook()
+        {
+            // Get all books with details
+            var books = await _bookService.GetAllBooksWithDetails();
+            return View(books);
+        }
+
+        // POST: Books/NewBorrowBook
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NewBorrowBook(int id)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var error = await _bookService.BorrowBook(id, userId);
+            if (error != null)
+            {
+                TempData["ErrorMessage"] = error;
+                return RedirectToAction("BookLibrary");
+            }
+
+            TempData["SuccessMessage"] = "Book borrowed successfully!";
+            return RedirectToAction("BookLibrary");
         }
 
     }

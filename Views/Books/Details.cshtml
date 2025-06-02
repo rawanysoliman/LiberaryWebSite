@@ -6,4 +6,7 @@
 <p><strong>Published:</strong> @Model.PublishedDate</p>
 <p><strong>Description:</strong> @Model.Description</p>
 
+<a asp-action="Index" asp-controller="Books" class="btn btn-primary">Back to List</a>
+<a asp-action="AddToWishlist" asp-controller="Books" asp-route-id="@Model.Id" class="btn btn-secondary btn-sm">Add to Wishlist</a>
+
 

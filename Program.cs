@@ -1,7 +1,9 @@
 using LibraryManagementSystem.Data;
 using LibraryManagementSystem.Models;
 using LibraryManagementSystem.Repositories;
+using LibraryManagementSystem.Services;
 using LibraryManagementSystem.UnitOfWorkPattern;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,6 +48,8 @@ namespace LibraryManagementSystem
             //register repositories & unit of work
             builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<IAuthorsService, AuthorsService>();
 
 
             builder.Services.AddControllersWithViews();
@@ -69,8 +73,8 @@ namespace LibraryManagementSystem
 
             app.UseRouting();
 
-            app.UseAuthorization(); //// For Identity authentication(role) 
             app.UseAuthentication(); //for cookie authentication
+            app.UseAuthorization(); //// For Identity authentication(role) 
 
             app.MapControllerRoute(
                 name: "default",

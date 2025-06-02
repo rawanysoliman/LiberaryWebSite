@@ -53,3 +53,240 @@ body {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
 }
+
+body {
+    background: #181a1b;
+}
+
+h1, .card-title, .card-text, .btn, .text-muted, .btn-info, .btn-danger, .btn-secondary {
+    color: #f8f9fa !important;
+}
+
+.container {
+    background: transparent;
+}
+
+.card {
+    background: #23272b;
+    border: 1px solid #343a40;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+    .card:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 6px 24px rgba(13,110,253,0.15);
+        border-color: #0d6efd;
+    }
+
+.card-footer {
+    background: #23272b !important;
+    border-top: 1px solid #343a40;
+}
+
+.btn-info {
+    background: linear-gradient(90deg, #0d6efd 0%, #23272b 100%);
+    border: none;
+}
+
+    .btn-info:hover {
+        background: #0b5ed7;
+    }
+
+.btn-danger {
+    background: #dc3545;
+    border: none;
+}
+
+    .btn-danger:hover {
+        background: #a71d2a;
+    }
+
+.btn-secondary {
+    background: #343a40;
+    border: none;
+}
+
+    .btn-secondary:hover {
+        background: #23272b;
+    }
+
+.bg-light {
+    background: #343a40 !important;
+}
+
+.text-muted {
+    color: #adb5bd !important;
+}
+body {
+    background: #181a1b;
+}
+
+.card, .card-body, .card-header, .card-footer {
+    background: #23272b !important;
+    color: #f8f9fa !important;
+    border: none;
+}
+
+.form-label, .form-select, .form-control {
+    color: #f8f9fa !important;
+    background: #181a1b !important;
+    border: 1px solid #343a40;
+}
+
+    .form-control:focus, .form-select:focus {
+        background: #23272b !important;
+        color: #fff !important;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+    }
+
+.btn-primary, .btn-secondary {
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #0d6efd 0%, #23272b 100%);
+}
+
+    .btn-primary:hover {
+        background: #0b5ed7;
+    }
+
+.btn-secondary {
+    background: #343a40;
+    color: #f8f9fa;
+}
+
+    .btn-secondary:hover {
+        background: #23272b;
+        color: #fff;
+    }
+
+.badge.bg-success, .badge.bg-danger {
+    font-size: 0.9em;
+}
+
+.card.h-100 {
+    background: #23272b;
+    border: 1px solid #343a40;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.card-title, .card-text, .badge, .form-label {
+    color: #f8f9fa !important;
+}
+
+.filter-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #0d6efd;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.filter-section {
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+    border: 1px solid #0d6efd33;
+    background: #23272b;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+}
+
+body {
+    background: #181a1b;
+}
+
+.card {
+    background: #23272b;
+    border: none;
+}
+
+.card-header {
+    background: linear-gradient(90deg, #0d6efd 0%, #212529 100%);
+    border-bottom: none;
+}
+
+.form-label, .form-check-label, .card-title, .card-footer, .form-control {
+    color: #f8f9fa !important;
+}
+
+.form-control, .form-check-input {
+    background: #181a1b;
+    border: 1px solid #343a40;
+    color: #f8f9fa;
+}
+
+    .form-control:focus {
+        background: #23272b;
+        color: #fff;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+    }
+
+.btn-primary {
+    background: linear-gradient(90deg, #0d6efd 0%, #212529 100%);
+    border: none;
+}
+
+    .btn-primary:hover {
+        background: #0b5ed7;
+    }
+
+.card-footer a {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.text-danger {
+    color: #ff6b6b !important;
+}
+
+body {
+    background: #181a1b;
+}
+
+.card {
+    background: #23272b;
+    border: none;
+}
+
+.card-header {
+    background: linear-gradient(90deg, #198754 0%, #23272b 100%);
+    border-bottom: none;
+}
+
+.form-label, .card-title, .card-footer, .form-control, .form-check-label {
+    color: #f8f9fa !important;
+}
+
+.form-control, .form-check-input {
+    background: #181a1b;
+    border: 1px solid #343a40;
+    color: #f8f9fa;
+}
+
+    .form-control:focus {
+        background: #23272b;
+        color: #fff;
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25,135,84,.25);
+    }
+
+.btn-success {
+    background: linear-gradient(90deg, #198754 0%, #23272b 100%);
+    border: none;
+}
+
+    .btn-success:hover {
+        background: #157347;
+    }
+
+.card-footer a {
+    color: #198754;
+    text-decoration: underline;
+}
+
+.text-danger {
+    color: #ff6b6b !important;
+}
