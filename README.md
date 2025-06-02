@@ -72,7 +72,7 @@ This project uses **N-Tier Architecture**:
 | 📚 Book Library | 📖 Book Actions |
 |----------------|----------------|
 | ![Book List](imgs/img1.png) | ![Borrow/Return](imgs/img2.png) |
-| 🔐 Authentication |
+| 🔐 Authentication |📝 Registeration
 |----------------|----------------|
 | ![Login](imgs/img3.png) | ![Register](imgs/img4.png) |
 
