@@ -4,22 +4,23 @@ A digital book library management system built using **ASP.NET Core MVC**, follo
 
 ---
 
-## 🚀 Features
+## ✨ Features
 
-### ✅ Core Functionalities
-- 📖 **View Books**  
-  - Displays books with title, author, category, availability status, and cover image.
-- 🔎 **Filter Books**  
-  - Filter books by:
-    - Availability (Available / Borrowed)
-    - Borrowed Date (From - To)
-    - Returned Date (From - To)
-- 📥 **Borrow Book**
-  - Users can borrow available books.
-  - Sets `BorrowedBy`, `BorrowedDate`, and updates availability.
-- 📤 **Return Book**
-  - Only the user who borrowed the book can return it.
-  - Sets `ReturnedDate`, clears `BorrowedBy`, and updates availability.
+- 📝 User registration and 🔐 login using ASP.NET Core Identity
+- 📚 Book borrowing and returning with date tracking
+- 🖼️ Book image upload with validation
+- 📅 Filtering books by availability, borrow date, and return date
+- 🔎 Search by book title
+- ✅ Availability status dynamically updates with JavaScript when selecting a book to borrow
+- 🧰 Repository + Unit of Work pattern for clean data access
+- 🎨 Responsive UI using Bootstrap
+
+## 🛡️ Authorization
+
+The system uses ASP.NET Core Identity for authentication and implements role-based **authorization**:
+- 👤 **User**: Can view books, borrow and return their own books
+- 🛠️ **Admin**: Has full access to manage books, authors, categories, and assign roles to users
+
 
 ---
 
