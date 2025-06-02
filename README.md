@@ -83,8 +83,6 @@ This project uses **N-Tier Architecture**:
 1. Clone the repository:
    ```bash
    git clone https://github.com/rawanysoliman/LibraryManagementSystem.git
-  
-
 2. Set your connection string in appsettings.json.
 3.Apply migrations and update the database:
    ```bash
