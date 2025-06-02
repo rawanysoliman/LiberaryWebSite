@@ -10,7 +10,6 @@ A digital book library management system built using **ASP.NET Core MVC**, follo
 - 📚 Book borrowing and returning with date tracking
 - 🖼️ Book image upload with validation
 - 📅 Filtering books by availability, borrow date, and return date
-- 🔎 Search by book title
 - ✅ Availability status dynamically updates with JavaScript when selecting a book to borrow
 - 🧰 Repository + Unit of Work pattern for clean data access
 - 🎨 Responsive UI using Bootstrap
