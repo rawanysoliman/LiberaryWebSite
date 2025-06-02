@@ -73,7 +73,6 @@ This project uses **N-Tier Architecture**:
 |----------------|----------------|
 | ![Book List](imgs/img1.png) | ![Borrow/Return](imgs/img2.png) |
 | 🔐 Authentication |📝 Registeration
-|----------------|----------------|
 | ![Login](imgs/img3.png) | ![Register](imgs/img4.png) |
 
 
@@ -92,4 +91,4 @@ This project uses **N-Tier Architecture**:
    dotnet ef database update
 4.Run the application:
    ```bash
-dotnet run
+   dotnet run
