@@ -72,6 +72,8 @@ This project uses **N-Tier Architecture**:
 | 📚 Book Library | 📖 Book Actions |
 |----------------|----------------|
 | ![Book List](imgs/img1.png) | ![Borrow/Return](imgs/img2.png) |
+| 🔐 Authentication |
+|----------------|----------------|
 | ![Login](imgs/img3.png) | ![Register](imgs/img4.png) |
 
 
@@ -91,12 +93,3 @@ This project uses **N-Tier Architecture**:
 4.Run the application:
    ```bash
 dotnet run
-
-
-
-
-
-
-
-
-
